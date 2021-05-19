@@ -1,0 +1,273 @@
+Here we will create a basic Student app from starting to finish.
+This app will allow us to create student, show students list, update student, and delete a student from the MongoDB database.
+Firstly,
+MERN Stack stands for MongoDB, Express, React, Node.js and this combined stack is known as MERN stack.
+
+Stack	Detail
+MongoDB	A document-oriented database programme based on NoSQL.
+Express	It’s a robust Node.js web application framework that helps in creating powerful REST APIs.
+React	A JavaScript library used to create beautiful and interactive user interfaces developed by Facebook and the community of individual developers.
+Node	It’s a JavaScript runtime environment built on Google Chrome’s V8 engine, and it compiles js at the runtime.
+
+In order to build MERN Stack web application, we must have Node.js installed on your system.
+Once the Node is installed run below cmd to check the Node.js version: node -v
+
+Create React Application
+Let’s start building the React project with create-react-app (CRA).
+
+npx create-react-app react-mernstack-crud
+
+Get inside the React project folder:
+
+cd react-mernstack-crud
+
+To start the React MERN Stack project, run following command:
+
+npm start
+
+This command opens the React project on the following URL: localhost:3000
+
+Now, we are all set to build the React CRUD app!
+
+Integrating React Bootstrap with React App
+In the next step, we will install the React Bootstrap front-end framework in our MERN stack app. 
+This framework will allow us to use the Bootstrap’s UI component in our React CRUD app.
+
+React Bootstrap allows us to import individual UI components instead of importing the whole set of libraries.
+
+npm install react-bootstrap bootstrap
+
+You have to import the Bootstrap into src/App.js file and it will help you to create the UI components swiftly.
+
+import "bootstrap/dist/css/bootstrap.css";
+
+Creating Simple React Components
+In this step, we will learn to create react components for managing data in the MERN stack CRUD application.
+
+Head over to src folder, make a folder and name it components and within that directory create the following components.
+
+create-student.component.js
+edit-student.component.js
+student-list.component.js
+Go to src/components/create-student.component.js and add the following code.
+
+import React, { Component } from "react";
+
+export default class CreateStudent extends Component {
+  render() {
+    return (
+      <div>
+        <p>React Create Student Component!</p>
+      </div>
+    );
+  }
+}
+
+
+
+Go to src/components/edit-student.component.js and add the following code.
+
+import React, { Component } from "react";
+
+export default class EditStudent extends Component {
+  render() {
+    return (
+      <div>
+        <p>React Edit Student Component!</p>
+      </div>
+    );
+  }
+}
+
+Go to src/components/student-list.component.js and add the following code.
+import React, { Component } from "react";
+
+export default class StudentList extends Component {
+  render() {
+    return (
+      <div>
+        <p>React Student List Component!</p>
+      </div>
+    );
+  }
+}
+
+
+Implementing React Router
+In this step, we will implement router in React.js app. Enter the command in terminal and hit enter to install the React Router.
+
+npm install react-router-dom --save
+
+You have to create the service-worker file, so create service worker file in the src folder and add the suggested code inside the src/serviceWorker.js file:
+
+// This optional code is used to register a service worker.
+// register() is not called by default.
+
+// This lets the app load faster on subsequent visits in production, and gives
+// it offline capabilities. However, it also means that developers (and users)
+// will only see deployed updates on subsequent visits to a page, after all the
+// existing tabs open on the page have been closed, since previously cached
+// resources are updated in the background.
+
+// To learn more about the benefits of this model and instructions on how to
+
+const isLocalhost = Boolean(
+    window.location.hostname === 'localhost' ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === '[::1]' ||
+    // 127.0.0.0/8 are considered localhost for IPv4.
+    window.location.hostname.match(
+        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
+);
+
+export function register(config) {
+    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+        // The URL constructor is available in all browsers that support SW.
+        const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
+        if (publicUrl.origin !== window.location.origin) {
+            // Our service worker won't work if PUBLIC_URL is on a different origin
+            // from what our page is served on. This might happen if a CDN is used to
+            // serve assets; see https://github.com/facebook/create-react-app/issues/2374
+            return;
+        }
+
+        window.addEventListener('load', () => {
+            const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+
+            if (isLocalhost) {
+                // This is running on localhost. Let's check if a service worker still exists or not.
+                checkValidServiceWorker(swUrl, config);
+
+                // Add some additional logging to localhost, pointing developers to the
+                // service worker/PWA documentation.
+                navigator.serviceWorker.ready.then(() => {
+                    console.log(
+                        'This web app is being served cache-first by a service '
+                    );
+                });
+            } else {
+                // Is not localhost. Just register service worker
+                registerValidSW(swUrl, config);
+            }
+        });
+    }
+}
+
+function registerValidSW(swUrl, config) {
+    navigator.serviceWorker
+        .register(swUrl)
+        .then(registration => {
+            registration.onupdatefound = () => {
+                const installingWorker = registration.installing;
+                if (installingWorker == null) {
+                    return;
+                }
+                installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed') {
+                        if (navigator.serviceWorker.controller) {
+                            // At this point, the updated precached content has been fetched,
+                            // but the previous service worker will still serve the older
+                            // content until all client tabs are closed.
+                            console.log(
+                                'New content is available and will be used when all '
+                            );
+
+                            // Execute callback
+                            if (config && config.onUpdate) {
+                                config.onUpdate(registration);
+                            }
+                        } else {
+                            // At this point, everything has been precached.
+                            // It's the perfect time to display a
+                            // "Content is cached for offline use." message.
+                            console.log('Content is cached for offline use.');
+
+                            // Execute callback
+                            if (config && config.onSuccess) {
+                                config.onSuccess(registration);
+                            }
+                        }
+                    }
+                };
+            };
+        })
+        .catch(error => {
+            console.error('Error during service worker registration:', error);
+        });
+}
+
+function checkValidServiceWorker(swUrl, config) {
+    // Check if the service worker can be found. If it can't reload the page.
+    fetch(swUrl, {
+            headers: {
+                'Service-Worker': 'script'
+            },
+        })
+        .then(response => {
+            // Ensure service worker exists, and that we really are getting a JS file.
+            const contentType = response.headers.get('content-type');
+            if (
+                response.status === 404 ||
+                (contentType != null && contentType.indexOf('javascript') === -1)
+            ) {
+                // No service worker found. Probably a different app. Reload the page.
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.unregister().then(() => {
+                        window.location.reload();
+                    });
+                });
+            } else {
+                // Service worker found. Proceed as normal.
+                registerValidSW(swUrl, config);
+            }
+        })
+        .catch(() => {
+            console.log(
+                'No internet connection found. App is running in offline mode.'
+            );
+        });
+}
+
+export function unregister() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready
+            .then(registration => {
+                registration.unregister();
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+    }
+}
+
+
+Next, head over to src/index.js file and tie the App component with the help of <BrowserRouter> object.
+
+
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
+
+
+
+
+
+
+
