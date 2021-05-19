@@ -1,0 +1,204 @@
+Next, we will set up a MongoDB database for React MERN stack app. We have already installed mongoDB, 
+create database folder inside the backend folder and create a file by the name of db.js and paste the following code inside of it.
+
+module.exports = {
+  db: 'mongodb://localhost:27017/reactdb'
+};
+JavaScript
+We have declared the mongoDB database, here 'reactdb' is the database name. 
+Locally it doesn’t require user name and password; however, in the production, you must create an admin and assign the database to a specific user.
+Define Mongoose Schema
+Then, create a mongoDB schema for interacting with mongoDB database. Create a folder inside backend folder to keep schema related files and name it Models and create a file Student.js inside of it.
+
+mkdir Models && cd Models && touch Student.js
+Next, include the following code in backend/models/Student.js file:
+
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+let studentSchema = new Schema({
+  name: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  rollno: {
+    type: Number
+  }
+}, {
+    collection: 'students'
+  })
+
+module.exports = mongoose.model('Student', studentSchema)
+
+
+We declared a name, email and rollno fields along with their respective data types in student Schema.
+
+Create Routes Using Express/Node JS for React CRUD App
+In this step, we are building routes (REST APIs) for React CRUD CREATE, READ, UPDATE and DELETE app using Express and Node.js. These routes will help us to manage the data in our React MERN stack student app.
+
+Create a folder and name it routes, here we will keep all the routes related files. Also, create the student.routes.js file inside this folder in this file we will define REST APIs.
+
+mkdir routes && cd routes && touch student.route.js
+
+Then, go to backend/routes/student.route.js file and add the following code.
+
+let mongoose = require('mongoose'),
+  express = require('express'),
+  router = express.Router();
+
+// Student Model
+let studentSchema = require('../models/Student');
+
+// CREATE Student
+router.route('/create-student').post((req, res, next) => {
+  studentSchema.create(req.body, (error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      console.log(data)
+      res.json(data)
+    }
+  })
+});
+
+// READ Students
+router.route('/').get((req, res) => {
+  studentSchema.find((error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
+// Get Single Student
+router.route('/edit-student/:id').get((req, res) => {
+  studentSchema.findById(req.params.id, (error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
+
+// Update Student
+router.route('/update-student/:id').put((req, res, next) => {
+  studentSchema.findByIdAndUpdate(req.params.id, {
+    $set: req.body
+  }, (error, data) => {
+    if (error) {
+      return next(error);
+      console.log(error)
+    } else {
+      res.json(data)
+      console.log('Student updated successfully !')
+    }
+  })
+})
+
+// Delete Student
+router.route('/delete-student/:id').delete((req, res, next) => {
+  studentSchema.findByIdAndRemove(req.params.id, (error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.status(200).json({
+        msg: data
+      })
+    }
+  })
+})
+
+module.exports = router;
+
+Configure Server.js in Node/Express.js Backend
+We have almost created everything to set up the Node and Expresss.js backend for React 16.9.0 MERN Stack CRUD app. Now we will create the server.js file in the root of the backend folder.
+
+Run command from the root of the backend folder to create server.js file.
+
+touch server.js
+
+Paste the following code inside the backend/server.js file.
+
+let express = require('express');
+let mongoose = require('mongoose');
+let cors = require('cors');
+let bodyParser = require('body-parser');
+let dbConfig = require('./database/db');
+
+// Express Route
+const studentRoute = require('../backend/routes/student.route')
+
+// Connecting mongoDB Database
+mongoose.Promise = global.Promise;
+mongoose.connect(dbConfig.db, {
+  useNewUrlParser: true
+}).then(() => {
+  console.log('Database sucessfully connected!')
+},
+  error => {
+    console.log('Could not connect to database : ' + error)
+  }
+)
+
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(cors());
+app.use('/students', studentRoute)
+
+
+// PORT
+const port = process.env.PORT || 4000;
+const server = app.listen(port, () => {
+  console.log('Connected to port ' + port)
+})
+
+// 404 Error
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use(function (err, req, res, next) {
+  console.error(err.message);
+  if (!err.statusCode) err.statusCode = 500;
+  res.status(err.statusCode).send(err.message);
+});
+
+Now, we have created the backend for our MERN stack app. Open the terminal and run the command to start MongoDB, It will allow you to save the student data in the database.
+
+mongod
+
+Also, open another terminal and run the following command to start the Nodemon server by staying in the backend folder.
+
+cd backend && nodemon server.js
+
+If you see the below output on the terminal screen, that means the node server is working correctly.
+
+[nodemon] 2.0.7
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node server.js`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
