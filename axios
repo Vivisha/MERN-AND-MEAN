@@ -1,0 +1,362 @@
+Using Axios with React to Make HTTP Request
+In this step, we will learn to use the Axios library in React MERN Stack app to handle the HTTP request. Axios is a promise-based HTTP client for the browser and node.js. It offers the following features.
+
+Make XMLHttpRequests from the browser
+Handle http requests from node.js
+Supports the Promise API
+Intercept request and response
+Transform request and response data
+Cancel requests
+Self-regulating for JSON data
+Client-side protection from XSRF
+Run command in the terminal to install axios in React CRUD app.
+
+npm install axios
+
+Next, we will send the student’s data to the MongoDB server as an object using the Axios post http method.
+
+import React, { Component } from "react";
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+
+export default class CreateStudent extends Component {
+
+  constructor(props) {
+    super(props)
+
+    // Setting up functions
+    this.onChangeStudentName = this.onChangeStudentName.bind(this);
+    this.onChangeStudentEmail = this.onChangeStudentEmail.bind(this);
+    this.onChangeStudentRollno = this.onChangeStudentRollno.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
+    // Setting up state
+    this.state = {
+      name: '',
+      email: '',
+      rollno: ''
+    }
+  }
+
+  onChangeStudentName(e) {
+    this.setState({ name: e.target.value })
+  }
+
+  onChangeStudentEmail(e) {
+    this.setState({ email: e.target.value })
+  }
+
+  onChangeStudentRollno(e) {
+    this.setState({ rollno: e.target.value })
+  }
+
+  onSubmit(e) {
+    e.preventDefault()
+
+    const studentObject = {
+      name: this.state.name,
+      email: this.state.email,
+      rollno: this.state.rollno
+    };
+    axios.post('http://localhost:4000/students/create-student', studentObject)
+      .then(res => console.log(res.data));
+
+    this.setState({ name: '', email: '', rollno: '' })
+  }
+
+  render() {
+    return (<div className="form-wrapper">
+      <Form onSubmit={this.onSubmit}>
+        <Form.Group controlId="Name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control type="text" value={this.state.name} onChange={this.onChangeStudentName} />
+        </Form.Group>
+
+        <Form.Group controlId="Email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control type="email" value={this.state.email} onChange={this.onChangeStudentEmail} />
+        </Form.Group>
+
+        <Form.Group controlId="Name">
+          <Form.Label>Roll No</Form.Label>
+          <Form.Control type="text" value={this.state.rollno} onChange={this.onChangeStudentRollno} />
+        </Form.Group>
+
+        <Button variant="danger" size="lg" block="block" type="submit">
+          Create Student
+        </Button>
+      </Form>
+    </div>);
+  }
+}
+React JSX
+Then enter the student name, email and rollno and click on Create Student button and your data will be saved in MongoDB NoSQL database.
+
+React MERN Stack CRUD App
+
+Show Data List with React Axios
+In this step, we will show the student’s data list using React Axios and react bootstrap. Add the given below code inside the src/components/student-list.component.js.
+
+import React, { Component } from "react";
+import axios from 'axios';
+import Table from 'react-bootstrap/Table';
+import StudentTableRow from './StudentTableRow';
+
+
+export default class StudentList extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      students: []
+    };
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:4000/students/')
+      .then(res => {
+        this.setState({
+          students: res.data
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  DataTable() {
+    return this.state.students.map((res, i) => {
+      return <StudentTableRow obj={res} key={i} />;
+    });
+  }
+
+
+  render() {
+    return (<div className="table-wrapper">
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Roll No</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.DataTable()}
+        </tbody>
+      </Table>
+    </div>);
+  }
+}
+React JSX
+In the above code, we are making HTTP GET request using React Axios and Node/Express JS REST API. We are using React-Bootstrap table to show the Students data on the frontend.
+
+In the next step, we will create the component and name it StudentTableRow.js and keep it in the components folder. We have already imported the component in the student-list.component.js file. Then add the given below code inside the components/StudentTableRow.js file.
+
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+
+export default class StudentTableRow extends Component {
+    render() {
+        return (
+            <tr>
+                <td>{this.props.obj.name}</td>
+                <td>{this.props.obj.email}</td>
+                <td>{this.props.obj.rollno}</td>
+                <td>
+                    <Link className="edit-link" to={"/edit-student/" + this.props.obj._id}>
+                        Edit
+                    </Link>
+                    <Button size="sm" variant="danger">Delete</Button>
+                </td>
+            </tr>
+        );
+    }
+}
+React JSX
+Edit, Update and Delete Data in React
+In this step, we will create edit and update functionality for the user to manage the student data in React v16.9.0. We used the Axios library and making the PUT request to update the data in MongoDB database using REST API built with Node and Express JS. Include the given below code inside the edit-student.component.js file.
+
+import React, { Component } from "react";
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+
+export default class EditStudent extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.onChangeStudentName = this.onChangeStudentName.bind(this);
+    this.onChangeStudentEmail = this.onChangeStudentEmail.bind(this);
+    this.onChangeStudentRollno = this.onChangeStudentRollno.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
+    // State
+    this.state = {
+      name: '',
+      email: '',
+      rollno: ''
+    }
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:4000/students/edit-student/' + this.props.match.params.id)
+      .then(res => {
+        this.setState({
+          name: res.data.name,
+          email: res.data.email,
+          rollno: res.data.rollno
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  onChangeStudentName(e) {
+    this.setState({ name: e.target.value })
+  }
+
+  onChangeStudentEmail(e) {
+    this.setState({ email: e.target.value })
+  }
+
+  onChangeStudentRollno(e) {
+    this.setState({ rollno: e.target.value })
+  }
+
+  onSubmit(e) {
+    e.preventDefault()
+
+    const studentObject = {
+      name: this.state.name,
+      email: this.state.email,
+      rollno: this.state.rollno
+    };
+
+    axios.put('http://localhost:4000/students/update-student/' + this.props.match.params.id, studentObject)
+      .then((res) => {
+        console.log(res.data)
+        console.log('Student successfully updated')
+      }).catch((error) => {
+        console.log(error)
+      })
+
+    // Redirect to Student List 
+    this.props.history.push('/student-list')
+  }
+
+
+  render() {
+    return (<div className="form-wrapper">
+      <Form onSubmit={this.onSubmit}>
+        <Form.Group controlId="Name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control type="text" value={this.state.name} onChange={this.onChangeStudentName} />
+        </Form.Group>
+
+        <Form.Group controlId="Email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control type="email" value={this.state.email} onChange={this.onChangeStudentEmail} />
+        </Form.Group>
+
+        <Form.Group controlId="Name">
+          <Form.Label>Roll No</Form.Label>
+          <Form.Control type="text" value={this.state.rollno} onChange={this.onChangeStudentRollno} />
+        </Form.Group>
+
+        <Button variant="danger" size="lg" block="block" type="submit">
+          Update Student
+        </Button>
+      </Form>
+    </div>);
+  }
+}
+React JSX
+Make Axios Delete Request to Delete Data
+Lastly, we will be building the delete functionality in our React CRUD demo app. Go to components/StudentTableRow.js file and call the Node/Express API to delete the student data from the MongoDB database.
+
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+
+export default class StudentTableRow extends Component {
+
+    constructor(props) {
+        super(props);
+        this.deleteStudent = this.deleteStudent.bind(this);
+    }
+
+    deleteStudent() {
+        axios.delete('http://localhost:4000/students/delete-student/' + this.props.obj._id)
+            .then((res) => {
+                console.log('Student successfully deleted!')
+            }).catch((error) => {
+                console.log(error)
+            })
+    }
+
+    render() {
+        return (
+            <tr>
+                <td>{this.props.obj.name}</td>
+                <td>{this.props.obj.email}</td>
+                <td>{this.props.obj.rollno}</td>
+                <td>
+                    <Link className="edit-link" to={"/edit-student/" + this.props.obj._id}>
+                        Edit
+                    </Link>
+                    <Button onClick={this.deleteStudent} size="sm" variant="danger">Delete</Button>
+                </td>
+            </tr>
+        );
+    }
+}
+React JSX
+Style CRUD App
+In this step, you have to style the crud application by adding the custom CSS in src/App.css file:
+
+.wrapper {
+  padding-top: 30px;
+}
+
+body h3 {
+  margin-bottom: 25px;
+}
+
+.navbar-brand a {
+  color: #ffffff;
+}
+
+.form-wrapper,
+.table-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.table-wrapper {
+  max-width: 700px;
+}
+
+.edit-link {
+  padding: 7px 10px;
+  font-size: 0.875rem;
+  line-height: normal;
+  border-radius: 0.2rem;
+  color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
+  margin-right: 10px;
+  position: relative;
+  top: 1px;
+}
+
+.edit-link:hover {
+  text-decoration: none;
+  color: #ffffff;
+}
