@@ -1,0 +1,46 @@
+We will create a folder inside our React app to manage the `backend` services such as database, models, schema, routes and APIs, name this folder backend.
+
+Run command to create backend folder and get inside of it.
+
+mkdir backend && cd backend
+
+Then, we need to create a separate package.json file for managing the backend of our React CRUD demo app example.
+
+npm init
+
+Next, install the given below Node dependencies for MERN stack backend.
+
+npm install mongoose express cors body-parser
+
+NPM	Detail
+Express	It’s a robust Node.js web application framework that helps in creating powerful REST APIs.
+MongoDB	It’s a NoSQL document-oriented database for creating a robust web application.
+CORS	It’s a node.js package helps in enabling Access-Control-Allow-Origin CORS header.
+bodyParser	This package extracts the entire body portion of an incoming request stream and exposes it on req.body.
+Install the nodemon dependency to automate the server restarting process.
+
+npm install nodemon --save-dev
+
+Your final package.json file will look something like this. Make sure to update the ‘main’ property by changing index.js name to server.js.
+
+{
+  "name": "mearn-stack-backend",
+  "version": "1.0.0",
+  "description": "MERN Stack backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Digamber Rawat",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.9"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
+
